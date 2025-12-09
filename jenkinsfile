@@ -1,35 +1,19 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'Openjdk21'
-        maven 'Maven3'
-    }
-
     stages {
-
-        stage('SCM') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/pruthvik235/jenkins-pipeline.git'
+                git 'https://github.com/pruthvik235/docker-automation.git'
             }
         }
 
-        stage('Maven Build') {
-            steps {
-                sh "mvn clean install"
-            }
-        }
-
-        stage('Docker Build & Push') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'github-credentials') {
-                        sh "docker build -t yathisha/docker-sept:tag123 ."
-                        sh "docker push yathisha/docker-sept:tag123"
-                    }
+                    docker.build("my-image:latest")
                 }
             }
         }
-
     }
 }
